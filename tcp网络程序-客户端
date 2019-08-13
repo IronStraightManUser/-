@@ -1,0 +1,19 @@
+import socket
+ 
+# 找个电话 - 创建套接字  IPv4     stream流式报文协议
+tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ 
+# 拨号 -- 建立和服务器之间的TCP连接  函数参数就是服务器套接字地址
+tcp_socket.connect(('192.168.12.120', 8080))
+ 
+data = input("输入数据:")
+ 
+# 沟通交流 --- TCP发送 send 参数表示发送的数据<bytes>
+tcp_socket.send(data.encode())
+ 
+# 接收数据 -- TCP recv 参数是本次接收的最大长度  阻塞等待
+recv_data = tcp_socket.recv(4096)
+print("收到数据%s" % recv_data.decode())
+ 
+# 挂机 -- 关闭TCP连接 释放套接字资源
+tcp_socket.close()
