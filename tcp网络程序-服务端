@@ -1,0 +1,43 @@
+import socket
+ 
+ 
+# 总机  －　创建TCP套接字 服务器套接字　－　接受请求
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ 
+# 申请固定号码 -- 使用固定端口
+server_socket.bind(('', 9999))
+ 
+# 安装客户服务系统　－　设置等待服务区
+# 将套接字<主动>变为套接字 ---＞　才能接受来自客户端的连接
+server_socket.listen(128)
+ 
+while True:
+    # 从等待服务区中取出一个客户 服务
+    # 总机将 客户转接到分机   accept返回值 分机,客户信息
+    # (<socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('192.168.12.120', 9999), raddr=('192.168.12.120', 34126)>,
+    #  ('192.168.12.120', 34126)
+    # )
+    # (和客户端关联的套接字, 客户端地址)
+    client_socket, client_address = server_socket.accept()
+    print("接受到来自%s的连接请求" % str(client_address))
+ 
+    while True:
+        # 使用分机和客户进行交流
+        # recv函数返回值的两种含义
+        #  正常情况 对方发送的数据
+        # b'' 意味着 TCP连接的对方已经断开了TCP连接
+        recv_data = client_socket.recv(4096)
+ 
+        if recv_data:
+            print("收到数据:%s" % recv_data)
+            client_socket.send(recv_data)
+ 
+        else:
+            print("收到客户端断开连接请求")
+            # 分机挂机
+            client_socket.close()
+            break
+ 
+ 
+# 总机挂机--一般服务器都是不会关闭的 
+server_socket.close()
